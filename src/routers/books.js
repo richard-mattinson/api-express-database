@@ -46,15 +46,24 @@ const rp = req.params
 // CREATE A BOOK (x)
 router.post('/', async (req, res) => {
     const rb = req.body
-    let sqlQuery =
-      `
+    let sqlQuery = `
       INSERT INTO books(title, type, author, topic, publicationDate, pages) 
       VALUES($1, $2, $3, $4, $5, $6)
       `;
     const qResult = await db.query(sqlQuery, [rb.title, rb.type, rb.author, rb.topic, rb.publicationDate, rb.pages]);
     res.status(201).json({ books: qResult.rows });
 });
-
-
+// UPDATE A BOOK ()
+router.put('/:id', async (req, res) => {
+    const rp = req.params // require params pulls from the user supplied value (in this case id)
+    const rb = req.body // require body pulls from the JSON 
+      let sqlQuery = `
+      UPDATE books SET title = $2, type = $3, author = $4, topic = $5, publicationDate = $6, pages = $7
+      WHERE id = $1
+      RETURNING *
+      `;
+    const qResult = await db.query(sqlQuery, [rp.id, rb.title, rb.type, rb.author, rb.topic, rb.publicationDate, rb.pages]);
+    res.status(201).json({ books: qResult.rows });
+});
 
 module.exports = router
