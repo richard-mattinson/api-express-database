@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
     const qResult = await db.query(sqlQuery, [rb.title, rb.type, rb.author, rb.topic, rb.publicationDate, rb.pages]);
     res.status(201).json({ books: qResult.rows });
 });
-// UPDATE A BOOK ()
+// UPDATE A BOOK (x)
 router.put('/:id', async (req, res) => {
     const rp = req.params // require params pulls from the user supplied value (in this case id)
     const rb = req.body // require body pulls from the JSON 
@@ -65,5 +65,17 @@ router.put('/:id', async (req, res) => {
     const qResult = await db.query(sqlQuery, [rp.id, rb.title, rb.type, rb.author, rb.topic, rb.publicationDate, rb.pages]);
     res.status(201).json({ books: qResult.rows });
 });
+
+// DELETING A BOOK (x)
+router.delete('/:id', async (req, res) => {
+  const rp = req.params.id
+  // RETURNING * in this query will result in the book not actually being deleted
+  let sqlQuery = `
+  DELETE FROM books
+  WHERE id = $1
+  `;
+  const qResult = await db.query(sqlQuery, [rp.id]);
+  res.status(201).json({ books: qResult.rows });
+})
 
 module.exports = router
